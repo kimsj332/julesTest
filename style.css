@@ -575,21 +575,32 @@ tbody tr {
 .favorite-btn {
   background: none;
   border: none;
-  font-size: 28px; /* 크기 조절 */
+  font-size: 28px; /* 아이콘 크기 증가 */
   cursor: pointer;
-  color: #cbd5e1;
-  padding: 4px 8px;
+  color: #64748b; /* 비활성 별 색상 */
+  padding: 4px 8px; /* 클릭 영역 확보 */
   flex-shrink: 0;
   margin-left: 8px;
   line-height: 1;
-  /* transition 삭제해서 애니메이션 제거 */
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 .favorite-btn:hover {
-  /* transform 제거 */
-  color: #94a3b8; /* 호버 시 색깔만 변경 */
+  color: #e2e8f0; /* 호버 시 밝은 색상 */
+  transform: scale(1.15); /* 호버 시 아이콘 확대 */
 }
 
 .favorite-btn.active {
-  color: #fbbf24; /* 즐겨찾기 선택 시 노란색 */
+  color: #fbbf24; /* 활성화 시 노란색 */
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.5); /* 네온 효과 */
+}
+
+.favorite-btn:active {
+  transform: scale(0.9); /* 클릭 시 아이콘 축소 (눌리는 효과) */
+  transition-duration: 0.1s;
+}
+
+/* 활성화된 버튼을 클릭할 때의 스타일 */
+.favorite-btn.active:active {
+    color: #f59e0b; /* 더 진한 노란색으로 변경 */
 }
