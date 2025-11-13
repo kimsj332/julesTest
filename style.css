@@ -1,155 +1,595 @@
-/* Basic Styles */
+/* Reset & Base */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+table {
+  letter-spacing: 0.09em; /* 적당히 넓게 늘림, 숫자 조정 가능 */
+}
+
 body {
-    background-color: #0f172a;
-    color: #e2e8f0;
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 40px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 .container {
-    max-width: 1600px;
-    margin: 0 auto;
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
-/* Header */
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+  display: flex;
+  justify-content: flex-start; /* 좌측 정렬 */
+  align-items: center;
+  gap: 20px; /* 로고와 버튼 사이 간격 */
+  padding: 16px 20px;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  margin-bottom: 25px;
 }
 
 .logo {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.logo img {
-    width: 32px;
-    height: 32px;
-    margin-right: 12px;
+.logo-icon {
+  font-size: 32px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .logo h1 {
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.add-product-btn {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
+.header-actions {
+  display: flex;
+  gap: 12px;
 }
 
-/* Main Content */
-main h2 {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 20px;
+.refresh-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.refresh-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+}
+
+.refresh-btn:active {
+  transform: translateY(0);
 }
 
 /* Filters */
 .filters {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .brand-filters {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.brand-filters span {
-    color: #94a3b8;
+.filter-label {
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 8px;
 }
 
-.brand-filters button {
-    background-color: #1e293b;
-    color: #e2e8f0;
-    border: 1px solid #334155;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
+.brand-btn {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
-.brand-filters button.active {
-    background-color: #2563eb;
-    border-color: #2563eb;
+.brand-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.brand-btn.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .actions {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-.actions button {
-    background-color: #1e293b;
-    color: #e2e8f0;
-    border: 1px solid #334155;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+/* Date Picker */
+.date-picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Data Table */
+.date-picker-container > label {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-input {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.date-input:hover {
+  border-color: #3b82f6;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.date-separator {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.quick-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.quick-btn {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.quick-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.quick-btn.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Table */
 .table-container {
-    background-color: #1e293b;
-    border-radius: 8px;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  overflow-x: auto;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 16px 24px;
-    text-align: left;
-    border-bottom: 1px solid #334155;
+th,
+td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+  border-right: 1px solid rgba(51, 65, 85, 0.3);
 }
 
 th {
-    font-size: 12px;
-    font-weight: 500;
-    color: #94a3b8;
-    text-transform: uppercase;
+  font-size: 12px;
+  /* font-weight: 600; */
+  color: #94a3b8;
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.8);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-td {
-    font-size: 14px;
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background: rgb(15, 23, 42) !important;
+  white-space: nowrap;
+  z-index: 11;
+  /* 너비는 기본 CSS에서 지정, JS에서 제어하지 않도록 */
+  width: 220px; /* 명확히 고정으로 지정 */
 }
 
+.sticky-col-2 {
+  position: sticky;
+  left: 220px;
+  background: rgb(15, 23, 42) !important;
+  white-space: nowrap;
+  z-index: 11;
+  min-width: 80px;
+  max-width: 300px;
+  text-align: center;
+  font-size: 14px;
+  /* font-weight: 600; */
+  border-right: 1px solid rgba(51, 65, 85, 0.3);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+/* 제품 정보 컬럼 (테이블 헤더 부분만 중앙 정렬 및 강조) */
+thead th.sticky-col {
+  text-align: center !important;
+  font-size: 14px;
+  /* font-weight: 600; */
+}
+
+.sticky-col,
+.sticky-col-2 {
+  will-change: left;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* 키워드 실제 텍스트 셀 */
+.keyword-cell {
+  font-size: 14px;
+  /* font-weight: 600; */
+  color: #cbd5e1;
+  white-space: nowrap;
+  text-align: center;
+  overflow: visible;
+  border: none;
+}
+
+/* 제품 그룹 행 아래쪽 얇은 선 */
+.product-group-even td,
+.product-group-odd td {
+  border-bottom: 1px solid rgba(72, 94, 121, 0.4); /* 연한 푸른색 선 */
+}
+
+/* 제품 그룹 경계: 진한 파란색 두꺼운 상단 테두리 */
+.product-group-odd + .product-group-even td,
+.product-group-even + .product-group-odd td {
+  border-top: 20px solid rgba(72, 94, 121, 0.4) !important; /* 진한 파란색, 주요 구분선 */
+}
+
+/* 호버 시 강조 색 */
+/* tbody tr:hover td,
+tbody tr:hover .sticky-col,
+tbody tr:hover .sticky-col-2 {
+  background: #36567a !important;
+} */
+
+/* 테이블 */
+table {
+  border-collapse: collapse;
+  table-layout: auto; /* 추가 */
+  width: auto; /* 추가 */
+}
+
+/* 날짜 컬럼 */
+th:not(.sticky-col):not(.sticky-col-2) {
+  width: 90px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+}
+
+td:not(.sticky-col):not(.sticky-col-2) {
+  width: 90px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+tbody tr {
+  transition: background 0.2s;
+}
+
+/* tbody tr:hover {
+  background: rgba(51, 65, 85, 0.3);
+} */
+
+/* 제품 정보 */
 .product-info {
-    display: flex;
-    align-items: center;
+  display: inline-flex; /* 변경 */
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap; /* 추가 */
 }
 
-.product-info img {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    margin-right: 16px;
+/* 제품 이미지 */
+.product-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #1e293b;
+  flex-shrink: 0;
+  border: 1px solid #334155;
+}
+
+/* 이미지 로딩 실패 시 대체 아이콘 */
+.product-image-fallback {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+  border: 1px solid #334155;
 }
 
 .product-details {
-    display: flex;
-    flex-direction: column;
+  display: inline-flex; /* 변경 */
+  flex-direction: column;
+  gap: 4px;
+  white-space: nowrap; /* 추가 */
 }
 
-.product-details .sku {
-    font-size: 12px;
-    color: #94a3b8;
+/* 제품명 */
+.product-name {
+  /* font-weight: 500; */
+  color: #94a3b8;
+  font-size: 12px;
+  white-space: nowrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+  display: inline-block; /* 추가 */
+}
+
+/* 브랜드명 */
+.product-brand {
+  font-size: 14px;
+  /* font-weight: 600; */
+  color: #e2e8f0;
+  white-space: nowrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+  display: inline-block; /* 추가 */
+}
+
+/* .keyword-cell {
+  font-size: 13px;
+  color: #cbd5e1;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} */
+
+/* Rank Display */
+.rank-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.rank-badge {
+  font-size: 14px;
+  /* font-weight: 500; */
+  color: #cbd5e1;
+}
+
+/* Loading */
+.loading-spinner {
+  text-align: center;
+  padding: 60px;
+  color: #64748b;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .container {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .brand-filters,
+  .actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .date-inputs {
+    flex-wrap: wrap;
+  }
+
+  .quick-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+/* Time Filter Buttons */
+.time-filter {
+  display: flex;
+  gap: 6px;
+}
+
+.time-btn {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.time-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.time-btn.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Device Filter Buttons (디바이스 선택 버튼) */
+.device-filter {
+  display: flex;
+  gap: 6px;
+}
+
+.device-btn {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.device-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.device-btn.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.device-highlight {
+  color: #09ff00; /* 선명한 파란색 */
+  font-weight: 700;
+}
+
+.time-highlight {
+  color: #00ffaa; /* 선명한 초록색 */
+  font-weight: 700;
+}
+
+.sticky-col {
+  background: rgb(15, 23, 42) !important; /* 투명도 제거, 불투명 짙은 배경 */
+}
+
+.sticky-col-2 {
+  background: rgb(15, 23, 42) !important; /* 투명도 제거 */
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.product-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 28px; /* 크기 조절 */
+  cursor: pointer;
+  color: #cbd5e1;
+  padding: 4px 8px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  line-height: 1;
+  /* transition 삭제해서 애니메이션 제거 */
+}
+
+.favorite-btn:hover {
+  /* transform 제거 */
+  color: #94a3b8; /* 호버 시 색깔만 변경 */
+}
+
+.favorite-btn.active {
+  color: #fbbf24; /* 즐겨찾기 선택 시 노란색 */
 }
