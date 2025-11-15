@@ -445,6 +445,16 @@ tbody tr {
   color: #cbd5e1;
 }
 
+/* ★★★ 요청하신 고정 크기 및 클릭 영역 설정 ★★★ */
+.rank-badge[data-keyword] {
+  display: inline-flex; /* 내부 컨텐츠(숫자)를 중앙 정렬하기 위해 flex 사용 */
+  justify-content: center;
+  align-items: center;
+  width: 50px; /* 고정 너비 */
+  height: 50px; /* 고정 높이 */
+  cursor: pointer; /* 클릭 가능한 커서 모양 */
+}
+
 /* Loading */
 .loading-spinner {
   text-align: center;
@@ -575,21 +585,269 @@ tbody tr {
 .favorite-btn {
   background: none;
   border: none;
-  font-size: 28px; /* 크기 조절 */
+  font-size: 24px; /* 아이콘 크기 증가 */
   cursor: pointer;
-  color: #cbd5e1;
-  padding: 4px 8px;
+  color: #5d6f8a; /* 비활성 별 색상 */
+  padding: 20px 20px; /* 클릭 영역 확보 */
   flex-shrink: 0;
   margin-left: 8px;
   line-height: 1;
-  /* transition 삭제해서 애니메이션 제거 */
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 .favorite-btn:hover {
-  /* transform 제거 */
-  color: #94a3b8; /* 호버 시 색깔만 변경 */
+  color: #e2e8f0; /* 호버 시 밝은 색상 */
+  /* transform: scale(1.05); 호버 시 아이콘 확대 */
 }
 
 .favorite-btn.active {
-  color: #fbbf24; /* 즐겨찾기 선택 시 노란색 */
+  color: #cca952; /* 활성화 시 노란색 */
+  text-shadow: 0 0 8px rgba(251, 253, 219, 0.3); /* 네온 효과 */
+}
+
+/* .favorite-btn:active {
+  transform: scale(0.95); 클릭 시 아이콘 축소 (눌리는 효과)
+  transition-duration: 0.1s;
+} */
+
+/* 활성화된 버튼을 클릭할 때의 스타일 */
+.favorite-btn.active:active {
+  color: #fceb00; /* 더 진한 노란색으로 변경 */
+}
+
+/* =============================
+   MODAL POPUP + TABLE 최종 정돈본 (폰트·강조·헤더 중앙, 라운딩·색 일반 유지)
+   ============================= */
+
+/* --- Overlay --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 41, 59, 0.68);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: modal-fade-in 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes modal-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* --- Modal Content --- */
+.modal-content {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  border-radius: 16px;
+  border: 1px solid rgba(51, 65, 85, 0.55);
+  /* box-shadow: 0 8px 38px rgba(30, 41, 59, 0.32); */
+  width: 95vw;
+  max-width: 1100px;
+  min-width: 430px;
+  padding: 34px 40px 20px;
+  color: #cbd5e1;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+/* --- Modal Header --- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.35);
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+.modal-header h3 {
+  flex: 1;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: inherit;
+  background: none;
+}
+.close-btn {
+  font-size: 1.8rem;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.close-btn:hover {
+  color: #e2e8f0;
+}
+
+/* --- Modal Body --- */
+.modal-body {
+  max-height: 67vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+  background: #35405b;
+  border-radius: 8px;
+}
+.modal-body::-webkit-scrollbar-track {
+  background: #232b3a;
+}
+
+/* =============================
+   TABLE (라운드 효과 유지, 폰트·강조·헤더 중앙 일관)
+   ============================= */
+.detail-rank-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(30, 41, 59, 0.6);
+  /* font-family: "Inter", "Noto Sans KR", sans-serif; */
+  box-shadow: 0 2px 12px rgba(23, 28, 48, 0.1);
+
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  overflow-x: auto;
+}
+
+/* 폰트 크기·강조 일괄 통일 + 헤더 완전 중앙정렬 */
+.detail-rank-table th,
+.detail-rank-table td {
+  padding: 12px 12px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  border-bottom: 1px solid #343e56 !important;
+  background: transparent;
+  text-align: center !important;
+  white-space: nowrap;
+  vertical-align: middle !important;
+}
+
+/* 칼럼 폭 */
+.detail-rank-table th.rank-col,
+.detail-rank-table td.rank-col {
+  min-width: 66px !important;
+  /* max-width: 44px !important; */
+  width: 40px !important;
+}
+.detail-rank-table th.price-col,
+.detail-rank-table td.price-col {
+  /* min-width: 64px !important; */
+  max-width: 84px !important;
+  width: 78px !important;
+  font-variant-numeric: tabular-nums;
+}
+.detail-rank-table th.prodname-col,
+.detail-rank-table td.prodname-col {
+  min-width: 120px !important;
+  width: auto !important;
+}
+
+/* 광고 row */
+.detail-rank-table .my-ad-row {
+  background: #2c3448 !important;
+  color: #ffd755 !important;
+  font-weight: 400 !important;
+}
+
+/* 행 hover */
+.detail-rank-table tbody tr:hover {
+  background: #283b58 !important;
+  transition: background 0.16s;
+}
+
+/* 이미지 크게, 둥글기 그대로 */
+.detail-rank-table td img {
+  width: 65px !important;
+  height: 65px !important;
+  border-radius: 9px;
+  object-fit: cover;
+  margin-right: 12px;
+  background: #282e3a;
+  border: 1px solid #212843;
+  vertical-align: middle;
+}
+
+/* 테이블 둥글게 효과 유지 */
+.detail-rank-table thead th:first-child {
+  border-top-left-radius: 10px;
+}
+.detail-rank-table thead th:last-child {
+  border-top-right-radius: 10px;
+}
+.detail-rank-table tr:last-child td {
+  border-bottom: 0 !important;
+}
+.detail-rank-table td:last-child,
+.detail-rank-table th:last-child {
+  border-right: 0 !important;
+}
+
+/* 헤더 sticky 모두 해제 */
+.detail-rank-table th {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+}
+
+/* 모든 칼럼 크기/굵기/폰트 완전 통레일 */
+.detail-rank-table td,
+.detail-rank-table th {
+  /* font-family: "Noto Sans KR", "Inter", sans-serif !important; */
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  background: transparent;
+}
+
+.popup-product-name {
+  color: #e2e8f0;
+}
+.detail-rank-table .my-ad-row td.prodname-col .popup-product-name {
+  color: #ffd755 !important;
+}
+
+.detail-rank-table th {
+  padding: 16px !important;
+  background-color: rgb(15, 23, 42) !important;
+}
+
+#modalTitle {
+  margin-bottom: 14px;
+}
+
+.modal-content {
+  padding: 40px 34px 34px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-spacer {
+  width: 50px; /* 버튼 예상 너비와 동일하게 맞춤 */
+  visibility: hidden; /* 공간만 차지, 실제로는 안 보임 */
+}
+
+.close-btn {
+  width: 50px; /* 명확히 고정폭 설정 */
+  padding-top: 3px;
+  cursor: pointer;
+}
+
+#modalTitle {
+  flex: 1;
+  text-align: center; /* 확실한 중앙 정렬 */
+  margin: 0;
 }

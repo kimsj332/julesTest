@@ -5,7 +5,7 @@ const API_BASE = "/api";
 let allData = [];
 let filteredData = [];
 let currentBrand = "favorite";
-let currentTimeFilter = "afternoon";
+let currentTimeFilter = "morning";
 let currentDevice = "Mobile"; // ✅ 추가
 let startDate = null;
 let endDate = null;
@@ -15,11 +15,11 @@ const timeButtons = document.querySelectorAll(".time-btn");
 const guideText = document.getElementById("guide-text");
 
 // let currentDevice = 'Mobile';
-let currentTime = "afternoon";
+// let currentTime = "morning";
 
 function updateGuideText() {
   const deviceText = currentDevice === "Mobile" ? "모바일" : "피씨";
-  const timeText = currentTime === "morning" ? "오전" : "오후";
+  const timeText = currentTimeFilter === "morning" ? "오전" : "오후";
 
   guideText.innerHTML = `💡 <span class="device-highlight">${deviceText}</span> 광고 <span class="time-highlight">${timeText}</span> 시간대 순위가 보여집니다!`;
 }
@@ -34,29 +34,41 @@ deviceButtons.forEach((btn) => {
 });
 
 timeButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", (e) => {
+    currentTimeFilter = e.target.dataset.time;
+
     timeButtons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentTime = btn.dataset.time;
+    e.target.classList.add("active");
+
     updateGuideText();
+    renderTable();
   });
 });
 
 // 초기 표시
 updateGuideText();
 
-// 초기화
 document.addEventListener("DOMContentLoaded", () => {
   initializeDatePicker();
   initializeEventListeners();
-  fetchData();
+
+  // 초기 시간 필터를 오전으로 세팅하고 버튼 활성화 업데이트
+  document.querySelectorAll(".time-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.time === "morning");
+  });
+
+  updateGuideText();
+
+  fetchData().then(() => {
+    renderTable();
+  });
 });
 
 // 날짜 피커 초기화
 function initializeDatePicker() {
   const today = new Date();
   const threeDaysAgo = new Date(today);
-  threeDaysAgo.setDate(today.getDate() - 3);
+  threeDaysAgo.setDate(today.getDate() - 6);
 
   document.getElementById("startDate").valueAsDate = threeDaysAgo;
   document.getElementById("endDate").valueAsDate = today;
@@ -68,68 +80,204 @@ function initializeDatePicker() {
 }
 
 // 이벤트 리스너 초기화
+// script.js
+
+// script.js
+
+// 이벤트 리스너 초기화 (이 함수 전체를 교체하세요)
 function initializeEventListeners() {
-  // 날짜 입력 변경
+  // --- 다른 요소들에 대한 이벤트 리스너 (변경 없음) ---
   document.getElementById("startDate").addEventListener("change", (e) => {
     startDate = e.target.value;
     clearQuickButtonActive();
     fetchData();
   });
-
   document.getElementById("endDate").addEventListener("change", (e) => {
     endDate = e.target.value;
     clearQuickButtonActive();
     fetchData();
   });
-
-  // 빠른 선택 버튼들
   document.querySelectorAll(".quick-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const days = parseInt(e.target.dataset.days);
       setQuickDateRange(days);
-
       document
         .querySelectorAll(".quick-btn")
         .forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
     });
   });
-
-  // ✅ 디바이스 선택 버튼 (새로 추가)
   document.querySelectorAll(".device-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       currentDevice = e.target.dataset.device;
-
-      // 활성화 상태 업데이트
       document
         .querySelectorAll(".device-btn")
         .forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
-
       fetchData();
     });
   });
-
-  // 오전/오후 버튼
   document.querySelectorAll(".time-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       currentTimeFilter = e.target.dataset.time;
-
       document
         .querySelectorAll(".time-btn")
         .forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
-
       renderTable();
     });
   });
+
+  // --- 모달 관련 요소 및 닫기 이벤트 (변경 없음) ---
+  const modal = document.getElementById("detailModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalBody = document.getElementById("modalBody");
+  const closeModalBtn = document.getElementById("closeModalBtn");
+
+  closeModalBtn.addEventListener("click", () => (modal.style.display = "none"));
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+
+  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+  // ✨ 즐겨찾기와 상세보기를 통합한 단일 이벤트 핸들러 ✨
+  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+  const tbody = document.querySelector("#rankingTable tbody");
+  tbody.addEventListener("click", async (e) => {
+    const clickedElement = e.target;
+
+    // --- 분기 1: 즐겨찾기 버튼(.favorite-btn) 클릭 시 ---
+    if (clickedElement.matches(".favorite-btn")) {
+      e.stopPropagation();
+      const btn = clickedElement;
+
+      const tr = btn.closest("tr");
+      if (!tr) return;
+
+      const brand = tr.dataset.brand;
+      const productName = tr.dataset.productName;
+      const keywordCell = tr.querySelector(".keyword-cell");
+      const keywordRaw = keywordCell ? keywordCell.textContent.trim() : "";
+      const isBonusKeyword = keywordRaw.includes("(보)");
+      const keyword = keywordRaw.replace(/^\(보\)\s*/, "");
+      const newFavorite = !btn.classList.contains("active");
+
+      const payload = {
+        brand,
+        productName,
+        keyword,
+        isBonusKeyword,
+        favorite: newFavorite,
+      };
+
+      try {
+        const res = await fetch("/api/favorite-toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+        if (result.success) {
+          const targetItem = allData.find(
+            (item) =>
+              item.brand === brand &&
+              item.productName === productName &&
+              item.keyword === keyword
+          );
+          if (targetItem) targetItem.favorite = newFavorite;
+          applyFilters();
+        } else {
+          alert("즐겨찾기 저장에 실패했습니다.");
+        }
+      } catch (err) {
+        console.error("API 호출 실패:", err);
+        alert("통신 오류가 발생했습니다.");
+      }
+    }
+
+    // --- 분기 2: 순위 배지(.rank-badge) 클릭 시 ---
+    else if (clickedElement.matches(".rank-badge[data-keyword]")) {
+      e.stopPropagation();
+      const btn = clickedElement;
+
+      const { date, keyword } = btn.dataset;
+
+      modalTitle.textContent = `"${keyword}" 키워드 순위 상세 (${date} ${
+        currentTimeFilter === "morning" ? "오전" : "오후"
+      })`;
+      modalBody.innerHTML = `<div class="loading-spinner">🔄 데이터 로딩 중...</div>`;
+      modal.style.display = "flex";
+
+      try {
+        const encodedKeyword = encodeURIComponent(keyword);
+        const res = await fetch(
+          `${API_BASE}/rankings/detail?keyword=${encodedKeyword}&date=${date}&time_period=${currentTimeFilter}&device_type=${currentDevice}`
+        );
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const detailData = await res.json();
+        renderDetailModal(detailData);
+      } catch (err) {
+        console.error("상세 순위 데이터 로딩 실패:", err);
+        modalBody.innerHTML = `<p style="color: red;">데이터를 불러오는 데 실패했습니다.</p>`;
+      }
+    }
+  });
 }
+
+// script.js 파일 하단 (formatDate, formatDateHeader 함수 등과 함께)
+
+function renderDetailModal(data) {
+  // modalBody를 이 함수 안에서 찾도록 수정하여 안정성 확보
+  const modalBody = document.getElementById("modalBody");
+
+  if (!data || data.length === 0) {
+    modalBody.innerHTML = "<p>해당 시점의 순위 데이터가 없습니다.</p>";
+    return;
+  }
+
+  let tableHtml = `
+  <table class="detail-rank-table">
+    <thead>
+      <tr>
+        <th class="rank-col">순위</th>
+        <th class="prodname-col">상품명</th>
+        <th class="price-col">가격</th>
+      </tr>
+    </thead>
+    <tbody>
+`;
+
+  data.forEach((item) => {
+    const isMyAdClass = item.is_my_ad ? "my-ad-row" : "";
+    const price = item.product_value
+      ? `${item.product_value.toLocaleString()}원`
+      : "N/A";
+    tableHtml += `
+        <tr class="${isMyAdClass}">
+          <td class="rank-col">${item.ranking_position}</td>
+          <td class="prodname-col">
+              <div style="display: flex; align-items: center;">
+                  <img src="${item.image_url}" object-fit: cover; border-radius: 4px;" onerror="this.style.display='none';"/>
+                  <span class="popup-product-name">${item.material_name}</span>
+              </div>
+          </td>
+          <td class="price-col">${price}</td>
+        </tr>
+      `;
+  });
+
+  tableHtml += `</tbody></table>`;
+  modalBody.innerHTML = tableHtml;
+}
+//---------
 
 // 빠른 날짜 범위 설정
 function setQuickDateRange(days) {
   const today = new Date();
   const startDay = new Date(today);
-  startDay.setDate(today.getDate() - days);
+  startDay.setDate(today.getDate() - days + 1);
 
   document.getElementById("startDate").valueAsDate = startDay;
   document.getElementById("endDate").valueAsDate = today;
@@ -379,24 +527,39 @@ function renderTable() {
     .querySelectorAll("th:not(.sticky-col):not(.sticky-col-2)")
     .forEach((th) => th.remove());
 
-  // 날짜 집합(전체 고유 날짜 set, 모든 행에 적용)
+  // ✅ startDate ~ endDate 사이의 모든 날짜 생성
   let dateList = [];
-  if (filteredData.length > 0) {
-    // 모든 제품에 걸쳐 unique 날짜 수집
-    const dateSet = new Set();
-    filteredData.forEach((item) => {
-      Object.keys(item.rankings).forEach((date) => dateSet.add(date));
-    });
-    dateList = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
-    dateList.forEach((date) => {
-      const th = document.createElement("th");
-      th.textContent = formatDateHeader(date);
-      th.style.textAlign = "center";
-      th.style.minWidth = "80px";
-      th.style.maxWidth = "100px";
-      thead.appendChild(th);
-    });
+  if (startDate && endDate) {
+    const start = new Date(startDate + "T00:00:00"); // 시간 정보 추가로 타임존 문제 방지
+    const end = new Date(endDate + "T00:00:00");
+
+    // ✅ 현재 날짜를 복사해서 사용
+    let current = new Date(start);
+    while (current <= end) {
+      dateList.push(formatDate(current));
+      current.setDate(current.getDate() + 1);
+    }
   }
+
+  //   // renderTable 함수 시작 부분에 추가
+  //   console.log("startDate:", startDate, "endDate:", endDate);
+  //   console.log("dateList:", dateList);
+  //   console.log("Sample item.rankings:", filteredData[0]?.rankings);
+
+  //   console.log("Generated dateList:", dateList); // 디버깅용
+  //   if (filteredData.length > 0) {
+  //     console.log("Sample rankings keys:", Object.keys(filteredData[0].rankings)); // 디버깅용
+  //   }
+
+  // 헤더에 날짜 추가
+  dateList.forEach((date) => {
+    const th = document.createElement("th");
+    th.textContent = formatDateHeader(date);
+    th.style.textAlign = "center";
+    th.style.minWidth = "80px";
+    th.style.maxWidth = "100px";
+    thead.appendChild(th);
+  });
 
   // 바디
   tbody.innerHTML = "";
@@ -422,6 +585,8 @@ function renderTable() {
     const groupClass = groupFlag ? "product-group-even" : "product-group-odd";
     const tr = document.createElement("tr");
     tr.className = groupClass;
+    tr.dataset.brand = item.brand;
+    tr.dataset.productName = item.productName;
 
     // 제품 정보
     const productTd = document.createElement("td");
@@ -449,33 +614,34 @@ function renderTable() {
     const keywordTd = document.createElement("td");
     keywordTd.className = `sticky-col-2 keyword-cell ${groupClass}`;
 
-    // 기존 키워드 텍스트
     const keyword = item.keyword;
-    // 타겟 키워드 여부
     const isTarget =
       item.is_target_keyword === true ||
       item.is_target_keyword === "true" ||
       item.is_target_keyword === 1;
 
-    // 표시할 키워드 결정 (보너스 키워드는 '(보)' 붙임)
     const displayKeyword = isTarget ? keyword : `(보) ${keyword}`;
 
     keywordTd.textContent = displayKeyword;
     tr.appendChild(keywordTd);
 
-    // 날짜별 순위: 항상 dateList 배열을 루프
+    // ✅ dateList의 모든 날짜에 대해 셀 생성
     dateList.forEach((date) => {
       const td = document.createElement("td");
       td.className = groupClass;
       td.style.textAlign = "center";
       td.style.minWidth = "80px";
       td.style.maxWidth = "100px";
+
+      // ✅ 날짜 형식 정규화 (item.rankings의 키와 정확히 매칭)
       const ranking = item.rankings[date];
+
       if (ranking) {
         const rank =
           currentTimeFilter === "morning" ? ranking.morning : ranking.afternoon;
+
         td.innerHTML = rank
-          ? createRankBadge(rank)
+          ? createRankBadge(rank, date, item.keyword)
           : `<span class="rank-badge rank-none">--</span>`;
       } else {
         td.innerHTML = `<span class="rank-badge rank-none">--</span>`;
@@ -486,39 +652,17 @@ function renderTable() {
     tbody.appendChild(tr);
   });
 
-  // 테이블 렌더링 완료 후 sticky 칼럼 위치 조정
   adjustStickyColumnPositions();
-
-  // 즐겨찾기 버튼 이벤트 리스너 추가
-  document.querySelectorAll(".favorite-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const brand = btn.dataset.brand;
-      const product = btn.dataset.product;
-      // allData에서 해당 항목 찾아서 favorite 토글
-      allData.forEach((item) => {
-        if (item.brand === brand && item.productName === product) {
-          item.favorite = !item.favorite;
-        }
-      });
-
-      // UI 업데이트
-      btn.classList.toggle("active");
-
-      // 서버에 저장하는 API 호출 (필요시)
-      // updateFavoriteStatus(brand, product, item.favorite);
-    });
-  });
 }
 
-// 순위 배지 생성
-function createRankBadge(rank) {
+// createRankBadge 함수 수정: 클릭 가능한 버튼으로 변경
+// script.js
+
+// createRankBadge 함수를 이 코드로 교체
+function createRankBadge(rank, date, keyword) {
   if (!rank || rank === "-") {
     return `<span class="rank-badge rank-none">--</span>`;
   }
-
-  // 숫자를 2자리로 포맷팅
-  const formattedRank = rank.toString().padStart(2, "0");
 
   let className = "rank-none";
   if (rank <= 5) className = "rank-top";
@@ -526,7 +670,14 @@ function createRankBadge(rank) {
   else if (rank <= 50) className = "rank-fair";
   else className = "rank-low";
 
-  return `<span class="rank-badge ${className}">${rank}</span>`;
+  // ★★★ 수정: button 대신 span 사용, 클릭 가능하도록 스타일과 속성 추가 ★★★
+  return `<span class="rank-badge ${className}" 
+                style="cursor: pointer;"
+                title="클릭하여 상세 순위 보기"
+                data-date="${date}" 
+                data-keyword="${keyword}">
+            ${rank}
+          </span>`;
 }
 
 // 날짜 포맷 (YYYY-MM-DD)

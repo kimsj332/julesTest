@@ -25,8 +25,8 @@
             </div>
 
             <div class="time-filter">
-                <button class="time-btn" data-time="morning">오전</button>
-                <button class="time-btn active" data-time="afternoon">오후</button>
+                <button class="time-btn active" data-time="morning">오전</button>
+                <button class="time-btn" data-time="afternoon">오후</button>
             </div>
 
             <!-- 가이드 텍스트 영역 -->
@@ -52,8 +52,8 @@
                             <input type="date" id="endDate" class="date-input">
                         </div>
                         <div class="quick-buttons">
-                            <button class="quick-btn active" data-days="3">최근 3일</button>
-                            <button class="quick-btn" data-days="7">최근 7일</button>
+                            <button class="quick-btn" data-days="3">최근 3일</button>
+                            <button class="quick-btn active" data-days="7">최근 7일</button>
                             <button class="quick-btn" data-days="14">최근 14일</button>
                             <button class="quick-btn" data-days="30">최근 30일</button>
                         </div>
@@ -80,6 +80,21 @@
             </div>
         </main>
     </div>
+
+    <div id="detailModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="header-spacer"></span> <!-- 좌측 빈 공간 -->
+                <h3 id="modalTitle">상세 순위 정보</h3>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <!-- API 응답 데이터가 여기에 동적으로 채워질 예정 -->
+                <div class="loading-spinner">🔄 데이터 로딩 중...</div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 
